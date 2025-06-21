@@ -413,8 +413,10 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
                                 <select class="hide-text-when-disabled"
                                         data-bind="enable: filamentbuddy.is_gpio_available() && filamentbuddy.fs.en(),
                                                    value: filamentbuddy.fs.empty_voltage">
-                                    <option value="high">High (3.3V)</option>
-                                    <option value="low">Low (0V)</option>
+                                    <option value="high-no">HIGH - Open _/ _ GND</option>
+                                    <option value="low-no">LOW - Open _/ _ 3V3</option>
+                                    <option value="high-nc">HIGH - Closed ___ 3V3</option>
+                                    <option value="low-nc">LOW - Closed ___ GND</option>
                                 </select>
                                 <button class="info-button-for-explanation"
                                         data-bind="click: showInfo.bind($data, 'fs.empty_voltage')">
@@ -422,7 +424,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
                                 </button>
                             </label>
                             <label>
-                                Raspberry will <b>pull-<span data-bind="text: filamentbuddy.fs.empty_voltage() === 'high' ?
+                                Raspberry will <b>pull-<span data-bind="text: ['high-no', 'low-nc'].includes(filamentbuddy.fs.empty_voltage()) ?
                                                                               'up' : 'down'"></span></b> the pin.
                             </label>
                         </div>

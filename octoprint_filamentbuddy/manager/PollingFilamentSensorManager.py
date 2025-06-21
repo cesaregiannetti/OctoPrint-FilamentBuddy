@@ -32,12 +32,14 @@ class PollingFilamentSensorManager(GenericFilamentSensorManager):
         super().__init__(logger, runout_f)
         self.__polling_time = polling_time
         self.__runout_time = runout_time
-        self.__is_empty_high = "high".__eq__(empty_v.lower())
+        __empty_state = empty_v.split("-")
+        __is_empty_high = "high".__eq__(__empty_state[0].lower())
+        self.__normally_closed = "nc".__eq__(__empty_state[1].lower())
 
         try:
             self.__input_device = DigitalInputDevice(
                 pin=pin,
-                pull_up=self.__is_empty_high,
+                pull_up=__is_empty_high != self.__normally_closed,
                 bounce_time=PollingFilamentSensorManager.BOUNCE_TIME
             )
         except ImportError:
@@ -90,7 +92,7 @@ class PollingFilamentSensorManager(GenericFilamentSensorManager):
                     self.__event.wait(PollingFilamentSensorManager.VERIFYING_TIME)
 
     def is_currently_available(self):
-        return self.__input_device.value
+        return self.__input_device.value != self.__normally_closed
 
     def close(self):
         if self.__running:

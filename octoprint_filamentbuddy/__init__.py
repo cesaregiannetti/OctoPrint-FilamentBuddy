@@ -313,7 +313,7 @@ class FilamentBuddyPlugin(
             "run_out_time": 60,  # s
             "use_pause": True,
             "run_out_command": "",
-            "empty_voltage": "low",
+            "empty_voltage": "low-no",
             "toolbar_time": 4,  # s
             "toolbar_en": True,
             "mqtt_en": False,

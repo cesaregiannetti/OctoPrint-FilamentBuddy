@@ -30,14 +30,15 @@ class InterruptFilamentSensorManager(GenericFilamentSensorManager):
     def __init__(self, logger, runout_f, pin: int, runout_time: int, empty_v: str):
         super().__init__(logger, runout_f)
 
-        self.__pin = pin
         self.__runout_time = runout_time
-        self.__is_empty_high = "high".__eq__(empty_v.lower())
+        __empty_state = empty_v.split("-")
+        __is_empty_high = "high".__eq__(__empty_state[0].lower())
+        self.__normally_closed = "nc".__eq__(__empty_state[1].lower())
 
         try:
             self.__input_device = DigitalInputDevice(
                 pin=pin,
-                pull_up=self.__is_empty_high,
+                pull_up=__is_empty_high != self.__normally_closed,
                 bounce_time=InterruptFilamentSensorManager.BOUNCE_TIME
             )
         except ImportError:
@@ -48,15 +49,19 @@ class InterruptFilamentSensorManager(GenericFilamentSensorManager):
         self.__runout_thread = None
         self.__runout_event = None
 
-        self.__filament_available = self.__input_device.value
-        self.__input_device.when_activated = lambda: self._submit(self.__input_went_up)
-        self.__input_device.when_deactivated = lambda: self._submit(self.__input_went_down)
+        self.__filament_available = self.__input_device.value != self.__normally_closed
+        self.__input_device.when_activated = lambda: self._submit(
+            self.__input_went_down if self.__normally_closed else self.__input_went_up
+        )
+        self.__input_device.when_deactivated = lambda: self._submit(
+            self.__input_went_up if self.__normally_closed else self.__input_went_down
+        )
 
     def start_checking(self):
         if self.__running:
             return
         self.__running = True
-        self.__filament_available = self.__input_device.value
+        self.__filament_available = self.__input_device.value != self.__normally_closed
         if not self.__filament_available:
             self.__check_if_runout()
         self._log("Filament Sensor via interrupt started")

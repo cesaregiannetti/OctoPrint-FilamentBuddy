@@ -537,11 +537,11 @@ $(function () {
                     "without passing via OctoPrint pausing feature."
                 ],
                 "empty_voltage": [
-                    "Empty sensor voltage",
-                    "The digital pin has two states, low and high. Some sensor uses high to communicate the filament " +
-                    "availability while others uses low. This parameter defines the pin level when the filament <b>" +
-                    "is not</b> inserted. By default, the plugin will pull the pin to this value, as indicated by " +
-                    "the note below the selector."
+                    "Empty sensor state",
+                    "The sensor can be normally open or normally closed. One terminal is connected to the input pin " +
+                    "and the other can be wired to 3.3V or Ground. The plugin will pull the pin to the opposite value, " +
+                    "as indicated by the note below the selector. This parameter defines the pin state when the filament " +
+                    "<b>is not</b> inserted. Example: LOW - Open means the sensor is open, connected to 3.3V and pulled down"
                 ],
                 "toolbar_time": [
                     "Toolbar update time",
